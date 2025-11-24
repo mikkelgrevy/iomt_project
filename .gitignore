@@ -1,11 +1,7 @@
-# Environment variables
-.env
-**/.env
+iot3/
 
-# Python virtual environments
-**/venv/
-
-# Python cache-filer
+venv/
+.env/
 __pycache__/
 *.pyc
 
