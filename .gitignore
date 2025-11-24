@@ -1,7 +1,7 @@
 iot3/
 
 venv/
-.env/
+.env
 __pycache__/
 *.pyc
 
