@@ -1,6 +1,10 @@
 iot3/
+
 venv/
 .env/
 __pycache__/
 *.pyc
-iomt.code-workspace
+
+# IDE-specifikke mapper
+.vscode/
+.idea/
