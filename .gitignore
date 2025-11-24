@@ -1,5 +1,14 @@
-venv/
-.env/
+# Environment variables
+.env
+**/.env
+
+# Python virtual environments
+**/venv/
+
+# Python cache-filer
 __pycache__/
 *.pyc
-iomt.code-workspace
+
+# IDE-specifikke mapper
+.vscode/
+.idea/

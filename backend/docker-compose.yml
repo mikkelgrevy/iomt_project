@@ -5,7 +5,7 @@ services:
     restart: always
     environment:
       - POSTGRES_USER=iomt_user
-      - POSTGRES_PASSWORD=iomt
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=iomt_database
     ports:
       - 5432:5432
