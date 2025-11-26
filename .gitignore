@@ -1,5 +1,4 @@
 iot3/
-
 venv/
 *.env
 __pycache__/
