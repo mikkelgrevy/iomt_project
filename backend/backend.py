@@ -1,53 +1,28 @@
-import os
-from fastapi import FastAPI, Depends
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
-from dotenv import load_dotenv
-from postgres_classes import Base, Patient
-from pydantic import BaseModel
-from datetime import date
+from fastapi import FastAPI, Depends, HTTPException
+from sqlalchemy.orm import Session
+import crud, models, schemas
+from database import engine, get_db
 
-load_dotenv()
 
-POSTGRES_USER = os.getenv("POSTGRES_USER")
-POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
-POSTGRES_DB = os.getenv("POSTGRES_DB")
-POSTGRES_HOST = os.getenv("POSTGRES_HOST", "localhost")
-
-DATABASE_URL = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:5432/{POSTGRES_DB}"
-
-engine = create_engine(DATABASE_URL)
-
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-Base.metadata.create_all(bind=engine)
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-class PatientCreate(BaseModel):
-    name: str
-    dob: date
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 @app.get("/")
 async def read_root():
-    return {"message": "hello world!"}
+    return {"message": "Hello World, Database is connected!"}
 
-@app.post("/patients")
-def create_patient(patient: PatientCreate, db: Session = Depends(get_db)):
-    db_patient = Patient(name=patient.name, dob=patient.dob)
-    db.add(db_patient)
-    db.commit()
-    db.refresh(db_patient)
-    return db_patient
+@app.post("/patients/", response_model=schemas.PatientResponse, status_code=201)
+def create_patient(patient: schemas.PatientCreate, db: Session = Depends(get_db)):
+    return crud.create_patient(db=db, patient=patient)
 
-@app.get("/patients")
-def get_all_patients(db: Session = Depends(get_db)):
-    patients = db.query(Patient).all()
-    return patients
+@app.get("/patients/", response_model=list[schemas.PatientResponse])
+def read_patients(db: Session = Depends(get_db)):
+    return crud.get_patients(db=db)
+
+@app.post("/plans/", response_model=schemas.MedicationPlanResponse, status_code=201)
+def create_plan(plan: schemas.MedicationPlanCreate, db: Session = Depends(get_db)):
+    db_patient = crud.get_patient(db, patient_id=plan.patient_id)
+    if not db_patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+    return crud.create_plan(db=db, plan=plan)
