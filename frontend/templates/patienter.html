@@ -1,5 +1,62 @@
 {% extends "base.html" %}
 
 {% block content %}
-<p class="text-warning">Patienter</p>
+<div class="container mt-4">
+    <h2>Patient Oversigt</h2>
+
+    <!-- Vis fejlbesked hvis der er en fejl -->
+    {% if error %}
+        <div class="alert alert-danger" role="alert">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    <table class="table table-striped mt-3 align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Navn</th>
+                <th>Fødselsdato</th>
+                <th>Medicinplaner</th> <!-- Ny kolonne -->
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Loop igennem listen af patienter -->
+            {% for patient in patients %}
+            <tr>
+                <td>{{ patient.id }}</td>
+                <td>{{ patient.name }}</td>
+                <td>{{ patient.dob }}</td>
+                <td>
+                    <!-- Loop igennem patientens planer -->
+                    {% if patient.plans %}
+                        <ul class="list-unstyled mb-0">
+                        {% for plan in patient.plans %}
+                            <li>
+                                <strong>{{ plan.medication_name }}</strong>
+                                ({{ plan.dosage }}) -
+                                <span class="badge bg-info text-dark">{{ plan.schedule_time }}</span>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        <span class="text-muted">Ingen planer</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <!-- Hvis listen er tom -->
+            <tr>
+                <td colspan="4" class="text-center">Ingen patienter fundet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <a href="/create_patient" class="btn btn-success">Opret Ny Patient</a>
+        <a href="/" class="btn btn-primary mt-3">Tilbage til forside</a>
+    </div>
+    
+</div>
+
 {% endblock %}
