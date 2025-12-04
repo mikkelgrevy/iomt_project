@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Opret Ny Patient{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Opret Ny Patient</h2>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form method="POST" action="/create_patient">
+
+                <div class="mb-3">
+                    <label for="name" class="form-label">Navn</label>
+                    <input type="text" class="form-control" id="name" name="name" required placeholder="F.eks. Jens Jensen">
+                </div>
+
+                <div class="mb-3">
+                    <label for="dob" class="form-label">Fødselsdato</label>
+                    <input type="date" class="form-control" id="dob" name="dob" required>
+                </div>
+
+                <button type="submit" class="btn btn-success">Opret Patient</button>
+                <a href="/patienter" class="btn btn-secondary">Annuller</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
