@@ -31,29 +31,48 @@ def patienter():
 @app.route('/create_patient', methods=['GET', 'POST'])
 def create_patient():
     if request.method == 'POST':
-#1. Hent data fra formularen
         name = request.form.get('name')
         dob = request.form.get('dob')
 
-#2. Forbered data til API (JSON format)
         patient_data = {
             "name": name,
             "dob": dob
         }
 
         try:
-#3. Send POST request til backend
             response = requests.post(f"{BACKEND_URL}/patients/", json=patient_data)
 
             if response.status_code == 201:
-#Succes! Send brugeren tilbage til patientlisten
                 return redirect(url_for('patienter'))
             else:
-#Fejl fra backend
                 return f"Fejl ved oprettelse: {response.text}", 400
 
         except requests.exceptions.RequestException as e:
             return f"Kunne ikke forbinde til backend: {e}", 500
 
-#Hvis det er et GET request (brugeren besøger siden), vis formularen
     return render_template('create_patient.html')
+
+@app.route('/create_plan', methods=['GET', 'POST'])
+def create_plan():
+    if request.method == 'POST':
+
+        plan_data = {
+            "patient_id": int(request.form.get('patient_id')),
+            "medication_name": request.form.get('medication_name'),
+            "dosage": request.form.get('dosage'),
+            "schedule_time": f"{request.form.get('schedule_time')}:00"
+        }
+
+        try:
+
+            response = requests.post(f"{BACKEND_URL}/plans/", json=plan_data)
+
+            if response.status_code == 201:
+                return redirect(url_for('patienter'))
+            else:
+                return f"Fejl fra backend: {response.text}", 400
+
+        except requests.exceptions.RequestException as e:
+            return f"Kunne ikke forbinde: {e}", 500
+
+    return render_template('create_plan.html')
