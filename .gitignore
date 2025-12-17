@@ -1,9 +1,9 @@
-iot3/
-venv/
-*.env
 __pycache__/
 *.pyc
-
-# IDE-specifikke mapper
-.vscode/
-.idea/
+venv/
+env/
+.env
+backend/.env
+frontend/.env
+iot3/
+GEMINI.md

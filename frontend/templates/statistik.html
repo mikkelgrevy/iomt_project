@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Statistik & Compliance{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Statistik for Patient #{{ stats.patient_id if stats else '?' }}</h2>
+
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    {% if stats %}
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-center text-white bg-success mb-3">
+                <div class="card-header">Compliance Score</div>
+                <div class="card-body">
+                    <h1 class="card-title display-4">{{ stats.compliance_percentage }}%</h1>
+                    <p class="card-text">Af dispenserede doser er taget.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center bg-light mb-3">
+                <div class="card-header">Total Dispenseret</div>
+                <div class="card-body">
+                    <h1 class="card-title display-4">{{ stats.total_dispensed }}</h1>
+                    <p class="card-text">Doser dispenseret korrekt.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center text-white bg-danger mb-3">
+                <div class="card-header">Sensor Fejl</div>
+                <div class="card-body">
+                    <h1 class="card-title display-4">{{ stats.sensor_errors }}</h1>
+                    <p class="card-text">Fejl under dispensering.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3>Hændelseslog</h3>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Tidspunkt</th>
+                <th>Medicin</th>
+                <th>Dispenseret?</th>
+                <th>Taget?</th>
+                <th>Fejl?</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in stats.logs %}
+            <tr>
+                <td>{{ log.timestamp }}</td>
+                <td>{{ log.medication }}</td>
+                <td>
+                    {% if log.dispensed %}
+                        <span class="badge bg-success">Ja</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Nej</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if log.taken %}
+                        <span class="badge bg-success">Ja</span>
+                    {% else %}
+                        <span class="badge bg-warning text-dark">Nej</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if log.error %}
+                        <span class="badge bg-danger">FEJL</span>
+                    {% else %}
+                        <span class="badge bg-success">OK</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5">Ingen hændelser fundet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% else %}
+        <p>Ingen statistik data tilgængelig.</p>
+    {% endif %}
+</div>
+{% endblock %}
